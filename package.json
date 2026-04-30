@@ -5,8 +5,8 @@
   "main": "dist/main.js",
   "scripts": {
     "start": "node dist/main.js",
-    "start:dev": "nest start --watch",
-    "build": "nest build -p tsconfig.build.json",
+    "start:dev": "node ./node_modules/@nestjs/cli/bin/nest.js start --watch",
+    "build": "node ./node_modules/@nestjs/cli/bin/nest.js build -p tsconfig.build.json",
     "lint": "eslint \"src/**/*.ts\"",
     "format": "prettier --write \"src/**/*.ts\"",
     "prisma:generate": "prisma generate",
@@ -32,11 +32,12 @@
     "passport-jwt": "^4.0.1",
     "prisma": "^6.19.3",
     "reflect-metadata": "^0.2.2",
-    "rxjs": "^7.8.2"
+    "rxjs": "^7.8.2",
+    "@nestjs/cli": "^11.0.21",
+    "typescript": "^6.0.3"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
-    "@nestjs/cli": "^11.0.21",
     "@nestjs/schematics": "^11.1.0",
     "@nestjs/testing": "^11.1.19",
     "@types/bcrypt": "^6.0.0",
@@ -52,7 +53,6 @@
     "supertest": "^7.2.2",
     "ts-jest": "^29.4.9",
     "ts-node": "^10.9.2",
-    "typescript": "^6.0.3",
     "typescript-eslint": "^8.59.1"
   }
 }
