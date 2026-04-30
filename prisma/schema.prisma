@@ -1,0 +1,91 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  MEMBER
+}
+
+enum TaskStatus {
+  TODO
+  IN_PROGRESS
+  DONE
+}
+
+model User {
+  id        String   @id @default(uuid()) @db.Uuid
+  name      String
+  email     String   @unique
+  password  String
+  role      Role     @default(MEMBER)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // User → Project (1:N created projects)
+  createdProjects Project[] @relation("UserCreatedProjects")
+
+  // User → Task (1:N assigned tasks)
+  assignedTasks Task[] @relation("UserAssignedTasks")
+
+  // User ↔ Project (M:N via TeamMember)
+  teamMemberships TeamMember[]
+
+  @@index([email])
+}
+
+model Project {
+  id          String   @id @default(uuid()) @db.Uuid
+  name        String
+  description String?
+  createdById String   @db.Uuid
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  createdBy User @relation("UserCreatedProjects", fields: [createdById], references: [id], onDelete: Cascade)
+
+  // Project → Task (1:N)
+  tasks Task[]
+
+  // User ↔ Project (M:N via TeamMember)
+  teamMembers TeamMember[]
+
+  @@index([createdById])
+}
+
+model Task {
+  id           String     @id @default(uuid()) @db.Uuid
+  title        String
+  description  String?
+  status       TaskStatus @default(TODO)
+  dueDate      DateTime?
+  assignedToId String?    @db.Uuid
+  projectId    String     @db.Uuid
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  assignedTo User?   @relation("UserAssignedTasks", fields: [assignedToId], references: [id], onDelete: SetNull)
+  project    Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@index([projectId])
+  @@index([assignedToId])
+}
+
+model TeamMember {
+  id        String   @id @default(uuid()) @db.Uuid
+  userId    String   @db.Uuid
+  projectId String   @db.Uuid
+  createdAt DateTime @default(now())
+
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, projectId])
+  @@index([userId])
+  @@index([projectId])
+}
