@@ -7,7 +7,7 @@ type LoginBody = { email: string; password: string };
 export async function POST(req: Request) {
   const body = (await req.json()) as LoginBody;
 
-  const baseUrl = process.env.API_URL ?? process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3000';
+  const baseUrl = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3000';
   const res = await fetch(`${baseUrl}/auth/login`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
