@@ -8,6 +8,13 @@ async function bootstrap() {
 
   app.enableShutdownHooks();
 
+  app.enableCors({
+    origin: 'https://task-management-frontend-production-a475.up.railway.app',
+    credentials: true,
+    methods: ['POST', 'GET', 'PATCH', 'DELETE'],
+    allowedHeaders: ['Content-Type'],
+  });
+
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
